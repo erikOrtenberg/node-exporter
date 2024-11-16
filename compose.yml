@@ -1,0 +1,21 @@
+services:
+  endpoint:
+    image: quay.io/prometheus/node-exporter:latest
+    command:
+      - '--path.rootfs=/host' 
+      - '--collector.textfile.directory=/var/lib/node_exporter/textfile_collector'
+    network_mode: host
+    pid: host
+    restart: unless-stopped
+    volumes:
+      - '/:/host:ro,rslave'
+      - 'node-exporter-textfiles:/var/lib/node_exporter/textfile_collector'
+  smart_exporter:
+    image: ghcr.io/micha37-martins/smartmon:latest
+    privileged: true
+    network_mode: host
+    volumes:
+      - 'node-exporter-textfiles:/var/lib/node_exporter/textfile_collector'
+
+volumes:
+  node-exporter-textfiles:
